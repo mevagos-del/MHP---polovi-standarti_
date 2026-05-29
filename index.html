@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Польові стандарти</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="portal-header">
+        <div class="portal-header__inner">
+          <div class="brand">
+            <div class="brand__mark">MHP</div>
+            <div>
+              <p class="brand__suite">MHP Business Tools</p>
+              <h1>Польові стандарти</h1>
+              <p class="brand__subtitle">Планування активностей торгової команди</p>
+            </div>
+          </div>
+          <div class="portal-header__status">Static MVP</div>
+        </div>
+      </header>
+
+      <main class="page-shell">
+        <section class="panel panel--intro" aria-label="Огляд модуля">
+          <div>
+            <p class="section-kicker">Місячне планування</p>
+            <h2>Внесення та оновлення планів польових активностей</h2>
+          </div>
+          <p>
+            Оберіть канал збуту, співробітника та місяць. Якщо план для цієї
+            комбінації вже існує, система запропонує оновити актуальну версію.
+          </p>
+        </section>
+
+        <section class="panel" aria-labelledby="plan-form-title">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Форма плану</p>
+              <h2 id="plan-form-title">План активностей</h2>
+            </div>
+            <span class="section-label">localStorage</span>
+          </div>
+
+          <div class="message message--success" id="successMessage" hidden></div>
+          <div class="message message--error" id="errorMessage" hidden></div>
+
+          <form class="plan-form" id="planForm" novalidate>
+            <label>
+              Канал збуту
+              <select id="channel" name="channel" required>
+                <option value="">Оберіть канал збуту</option>
+              </select>
+              <span class="field-error" id="channelError"></span>
+            </label>
+
+            <label class="autocomplete-field">
+              ПІБ
+              <input
+                autocomplete="off"
+                disabled
+                id="userSearch"
+                name="userSearch"
+                placeholder="Спочатку оберіть канал збуту"
+                type="text"
+              />
+              <input id="selectedUserName" name="selectedUserName" type="hidden" />
+              <div class="autocomplete-list" id="userSuggestions" hidden></div>
+              <span class="helper-text" id="userHelper">
+                Оберіть канал збуту, щоб побачити доступних користувачів.
+              </span>
+              <span class="field-error" id="userError"></span>
+            </label>
+
+            <label>
+              Місяць планування
+              <select id="month" name="month" required>
+                <option value="">Оберіть місяць</option>
+              </select>
+              <span class="field-error" id="monthError"></span>
+            </label>
+
+            <label>
+              Аудити / Сторчеки
+              <input
+                id="audits"
+                inputmode="numeric"
+                name="audits"
+                pattern="\d*"
+                placeholder="Введіть кількість візитів"
+                required
+                type="text"
+              />
+              <span class="helper-text">Значення вноситься у кількості візитів.</span>
+              <span class="field-error" id="auditsError"></span>
+            </label>
+
+            <label>
+              Адміністративні дні
+              <input
+                id="adminDays"
+                inputmode="numeric"
+                name="adminDays"
+                pattern="\d*"
+                placeholder="Введіть кількість днів"
+                required
+                type="text"
+              />
+              <span class="helper-text">Значення вноситься у кількості днів.</span>
+              <span class="field-error" id="adminDaysError"></span>
+            </label>
+
+            <label>
+              Перемовини
+              <input
+                id="negotiations"
+                inputmode="numeric"
+                name="negotiations"
+                pattern="\d*"
+                placeholder="Введіть кількість перемовин"
+                required
+                type="text"
+              />
+              <span class="helper-text">Значення вноситься у кількості перемовин.</span>
+              <span class="field-error" id="negotiationsError"></span>
+            </label>
+
+            <label class="plan-form__comment">
+              Коментар
+              <textarea
+                id="comment"
+                name="comment"
+                placeholder="Необов'язково"
+                rows="4"
+              ></textarea>
+            </label>
+
+            <div class="plan-form__actions">
+              <button type="submit">Зберегти план</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel" aria-labelledby="plans-table-title">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Історія користувача</p>
+              <h2 id="plans-table-title">Внесені плани</h2>
+            </div>
+          </div>
+
+          <div class="empty-state" id="historyMessage">
+            Оберіть канал збуту та ПІБ для перегляду історії.
+          </div>
+
+          <div class="table-wrap" id="tableWrap" hidden>
+            <table>
+              <thead>
+                <tr>
+                  <th>Місяць планування</th>
+                  <th>Аудити / Сторчеки</th>
+                  <th>Адміністративні дні</th>
+                  <th>Перемовини</th>
+                  <th>Коментар</th>
+                  <th>Версія</th>
+                  <th>Останнє оновлення</th>
+                </tr>
+              </thead>
+              <tbody id="plansTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel admin-panel" aria-labelledby="admin-export-title">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Адміністрування</p>
+              <h2 id="admin-export-title">Адмінський експорт</h2>
+            </div>
+          </div>
+
+          <div class="admin-grid">
+            <label>
+              Місяць планування
+              <select id="exportMonth" name="exportMonth">
+                <option value="">Оберіть місяць</option>
+              </select>
+            </label>
+
+            <div class="admin-actions">
+              <button type="button" id="exportCurrentPlans">
+                Експорт актуальних планів
+              </button>
+              <button class="button-secondary" type="button" id="exportChangeLog">
+                Експорт журналу змін
+              </button>
+            </div>
+          </div>
+
+          <p class="admin-note">
+            Статичний MVP експортує лише дані, збережені в localStorage цього
+            браузера та пристрою.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
